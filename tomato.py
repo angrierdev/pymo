@@ -1,50 +1,30 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-# Pomodoro 番茄工作法 https://en.wikipedia.org/wiki/Pomodoro_Technique
-# ====== 🍅 Tomato Clock =======
-# ./tomato.py         # start a 25 minutes tomato clock + 5 minutes break
-# ./tomato.py -t      # start a 25 minutes tomato clock
-# ./tomato.py -t <n>  # start a <n> minutes tomato clock
-# ./tomato.py -b      # take a 5 minutes break
-# ./tomato.py -b <n>  # take a <n> minutes break
-# ./tomato.py -h      # help
-
 
 import sys
 import time
 import subprocess
 
+BREAK_MINUTES, PLAN_MINUTES = 5, 5
 WORK_MINUTES = 25
-BREAK_MINUTES = 5
 
 
 def main():
     try:
-        if len(sys.argv) <= 1:
-            print(f'🍅 tomato {WORK_MINUTES} minutes. Ctrl+C to exit')
-            tomato(WORK_MINUTES, 'It is time to take a break')
-            print(f'🛀 break {BREAK_MINUTES} minutes. Ctrl+C to exit')
-            tomato(BREAK_MINUTES, 'It is time to work')
-
-        elif sys.argv[1] == '-t':
+        if len(sys.argv) <= 1 or sys.argv[1] in ["-h", "--help"]:
+            help()
+        
+        elif sys.argv[1] in ["-w", "--work"]:
             minutes = int(sys.argv[2]) if len(sys.argv) > 2 else WORK_MINUTES
             print(f'🍅 tomato {minutes} minutes. Ctrl+C to exit')
             tomato(minutes, 'It is time to take a break')
 
-        elif sys.argv[1] == '-b':
+        elif sys.argv[1] in ["-p", "--pause"]:
             minutes = int(sys.argv[2]) if len(sys.argv) > 2 else BREAK_MINUTES
             print(f'🛀 break {minutes} minutes. Ctrl+C to exit')
             tomato(minutes, 'It is time to work')
 
-        elif sys.argv[1] == '-h':
-            help()
-
-        else:
-            help()
-
     except KeyboardInterrupt:
-        print('\n👋 goodbye')
+        pass
     except Exception as ex:
         print(ex)
         exit(1)
@@ -59,7 +39,8 @@ def tomato(minutes, notify_msg):
             print('')
             break
 
-        countdown = '{}:{} ⏰'.format(int(left_seconds / 60), int(left_seconds % 60))
+        countdown = '{}:{} ⏰'.format(
+            int(left_seconds / 60), int(left_seconds % 60))
         duration = min(minutes, 25)
         progressbar(diff_seconds, minutes * 60, duration, countdown)
         time.sleep(1)
@@ -70,7 +51,8 @@ def tomato(minutes, notify_msg):
 def progressbar(curr, total, duration=10, extra=''):
     frac = curr / total
     filled = round(frac * duration)
-    print('\r', '🍅' * filled + '--' * (duration - filled), '[{:.0%}]'.format(frac), extra, end='')
+    print('\r', '🍅' * filled + '--' * (duration - filled)
+         , '[{:.0%}]'.format(frac), extra, end='')
 
 
 def notify_me(msg):
@@ -94,7 +76,8 @@ def notify_me(msg):
     try:
         if sys.platform == 'darwin':
             # macos desktop notification
-            subprocess.run(['terminal-notifier', '-title', '🍅', '-message', msg])
+            subprocess.run(
+                ['terminal-notifier', '-title', '🍅', '-message', msg])
             subprocess.run(['say', '-v', 'Daniel', msg])
         elif sys.platform.startswith('linux'):
             # ubuntu desktop notification
@@ -111,14 +94,39 @@ def notify_me(msg):
 
 def help():
     appname = sys.argv[0]
-    appname = appname if appname.endswith('.py') else 'tomato'  # tomato is pypi package
-    print('====== 🍅 Tomato Clock =======')
-    print(f'{appname}         # start a {WORK_MINUTES} minutes tomato clock + {BREAK_MINUTES} minutes break')
-    print(f'{appname} -t      # start a {WORK_MINUTES} minutes tomato clock')
-    print(f'{appname} -t <n>  # start a <n> minutes tomato clock')
-    print(f'{appname} -b      # take a {BREAK_MINUTES} minutes break')
-    print(f'{appname} -b <n>  # take a <n> minutes break')
-    print(f'{appname} -h      # help')
+    appname = appname if appname.endswith(
+        '.py') else 'tomato'  # tomato is pypi package
+
+    print('Use: pymo [OPTION]... [ARG]... [FLAG] [ARG]...')
+    print('Pymo3 - forked Pomodoro technique 🍅')
+    print(f'Starts pomo. Default time-blocks combo: {PLAN_MINUTES}m (next-TODOs) \
+planning+ {WORK_MINUTES}m work + {BREAK_MINUTES}m break')
+
+    print(f'\n')
+    print(f'Options')
+
+    print(f'\n')
+    print(f'#          [N] can be any custom positive integer, if.')
+
+    print(f'\n')
+    print(
+        f'-w,--work     [N] Starts N or {WORK_MINUTES}m work time-block (default)')
+    print(f'-b,--break    [N] Starts N or  {BREAK_MINUTES}m break (default)')
+
+    print(f'\n')
+    print(f'-p,--planning [N] Starts N or  {PLAN_MINUTES}m next-TODOs planning time-\
+block (default)')
+    print(f'                  After, the script will display a dialog box where \
+user can enter those to append it to the list file')
+
+    print(f'\n')
+    print(f'Flags (Optional, their arguments are mandatory both to --long options and -short options too)')
+
+    print(f'\n')
+    print(f'-r,--reminder          N Plays every N minutes a notification sound.')
+    print(f'   --reminder-register N Displays every N minutes the list file of')
+    print(f'                         next-TODOs, where user can \
+select or cancel to enter the next todo to working on')
 
 
 if __name__ == "__main__":
