@@ -13,7 +13,7 @@ def main():
         if len(sys.argv) <= 1 or sys.argv[1] in ["-h", "--help"]:
             help()
         
-        elif sys.argv[1] in ["-w", "--work"]:
+        elif sys.argv[1] in ["-p", "--pymo"]:
             minutes = int(sys.argv[2]) if len(sys.argv) > 2 else WORK_MINUTES
             print(f'🍅 tomato {minutes} minutes. Ctrl+C to exit')
             tomato(minutes, 'It is time to take a break')
@@ -99,7 +99,7 @@ def help():
 
     print('Use: pymo [OPTION]... [ARG]... [FLAG] [ARG]...')
     print('Pymo3 - forked Pomodoro technique 🍅')
-    print(f'Starts pomo. Default time-blocks combo: {PLAN_MINUTES}m (next-TODOs) \
+    print(f'Starts pymodoro. Default time-blocks combo: {PLAN_MINUTES}m (next-TODOs) \
 planning+ {WORK_MINUTES}m work + {BREAK_MINUTES}m break')
 
     print(f'\n')
@@ -110,11 +110,11 @@ planning+ {WORK_MINUTES}m work + {BREAK_MINUTES}m break')
 
     print(f'\n')
     print(
-        f'-w,--work     [N] Starts N or {WORK_MINUTES}m work time-block (default)')
+        f'-p,--pymo     [N] Starts N or {WORK_MINUTES}m work time-block (default)')
     print(f'-b,--break    [N] Starts N or  {BREAK_MINUTES}m break (default)')
 
     print(f'\n')
-    print(f'-p,--planning [N] Starts N or  {PLAN_MINUTES}m next-TODOs planning time-\
+    print(f'-P,--planning [N] Starts N or  {PLAN_MINUTES}m next-TODOs planning time-\
 block (default)')
     print(f'                  After, the script will display a dialog box where \
 user can enter those to append it to the list file')
